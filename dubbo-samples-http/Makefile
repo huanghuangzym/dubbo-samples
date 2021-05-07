@@ -1,0 +1,22 @@
+# Build parameters
+OUT?=./target
+DOCKER_TMP?=$(OUT)/docker_temp/
+DOCKER_PROVIDER_TAG?=harbor-b.alauda.cn/asm/dubbo-http-provider:latest
+DOCKER_CONSUMER_TAG?=harbor-b.alauda.cn/asm/dubbo-http-consumer:latest
+BINARY_NAME?=$(OUT)/dubbo-samples-http-1.0-SNAPSHOT.jar
+
+build:
+	mvn clean package
+docker-build: build
+	rm -rf $(DOCKER_TMP)
+	mkdir $(DOCKER_TMP)
+	cp $(BINARY_NAME) $(DOCKER_TMP)
+	cp ./docker/Dockerfile.provider $(DOCKER_TMP)Dockerfile
+	docker build -t $(DOCKER_PROVIDER_TAG) $(DOCKER_TMP) --push
+	cp ./docker/Dockerfile.consumer $(DOCKER_TMP)Dockerfile
+	docker build -t $(DOCKER_CONSUMER_TAG) $(DOCKER_TMP) --push
+	rm -rf $(DOCKER_TMP)
+clean:
+	rm -rf $(OUT)
+
+.PHONY: build docker-build clean

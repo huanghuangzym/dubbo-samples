@@ -29,8 +29,16 @@ public class HttpConsumer {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring/http-consumer.xml");
         context.start();
 
-        DemoService demoService = (DemoService) context.getBean("demoService");
-        String result = demoService.sayHello("world");
-        System.out.println(result);
+        while (true) {
+            try {
+                Thread.sleep(2000);
+                DemoService demoService = (DemoService) context.getBean("demoService");
+                String result = demoService.sayHello("world");
+                System.out.println(result);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
     }
 }
